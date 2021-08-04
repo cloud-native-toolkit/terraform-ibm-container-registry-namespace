@@ -5,7 +5,7 @@ locals {
   registry_namespace = var.registry_namespace != "" ? var.registry_namespace : var.resource_group_name
   registry_user      = var.registry_user != "" ? var.registry_user : "iamapikey"
   registry_password  = var.registry_password != "" ? var.registry_password : var.ibmcloud_api_key
-  registry_url       = data.local_file.registry_url[0].content
+  registry_url       = data.local_file.registry_url.content
   service            = "container-registry"
   crn                = "crn:v1:bluemix:public:container-registry:${var.region}:::"
 }
