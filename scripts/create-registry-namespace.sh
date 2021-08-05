@@ -1,31 +1,14 @@
 #!/usr/bin/env bash
 
 RESOURCE_GROUP="$1"
-REGION="$2"
-UPGRADE_PLAN="$3"
-REGISTRY_URL_FILE="$4"
+REGISTRY_REGION="$2"
+REGISTRY_NAMESPACE="$3"
+UPGRADE_PLAN="$4"
+REGISTRY_SERVER_FILE="$5"
 
-if [[ -z "${RESOURCE_GROUP}" ]] || [[ -z "${REGION}" ]]; then
-  echo "Usage: create-registry-namespace.sh RESOURCE_GROUP REGION [UPGRADE_PLAN] [REGISTRY_URL_FILE]"
+if [[ -z "${RESOURCE_GROUP}" ]] || [[ -z "${REGISTRY_REGION}" ]] || [[ -z "${REGISTRY_NAMESPACE}" ]]; then
+  echo "Usage: create-registry-namespace.sh RESOURCE_GROUP REGISTRY_REGION REGISTRY_NAMESPACE [UPGRADE_PLAN] [REGISTRY_SERVER_FILE]"
   exit 1
-fi
-
-# The name of a registry namespace cannot contain uppercase characters
-# Lowercase the resource group name, just in case...
-REGISTRY_NAMESPACE=$(echo "$RESOURCE_GROUP" | tr '[:upper:]' '[:lower:]')
-
-if [[ "${REGION}" =~ "us-" ]]; then
-  REGISTRY_REGION="us-south"
-elif [[ "${REGION}" == "eu-gb" ]]; then
-  REGISTRY_REGION="uk-south"
-elif [[ "${REGION}" =~ "eu-" ]]; then
-  REGISTRY_REGION="eu-central"
-elif [[ "${REGION}" =~ "jp-" ]]; then
-  REGISTRY_REGION="ap-north"
-elif [[ "${REGION}" =~ "ap-" ]]; then
-  REGISTRY_REGION="ap-south"
-else
-  REGISTRY_REGION="${REGION}"
 fi
 
 ibmcloud cr region-set "${REGISTRY_REGION}"
@@ -39,14 +22,14 @@ else
     echo -e "Registry namespace ${REGISTRY_NAMESPACE} found."
 fi
 
-REGISTRY_URL=$(ibmcloud cr region | grep "icr.io" | sed -E "s/.*'(.*icr.io)'.*/\1/")
-echo "Registry url: ${REGISTRY_URL}"
+REGISTRY_SERVER=$(ibmcloud cr region | grep "icr.io" | sed -E "s/.*'(.*icr.io)'.*/\1/")
+echo "Registry server: ${REGISTRY_SERVER}"
 
-if [[ -n "${REGISTRY_URL_FILE}" ]]; then
-  REGISTRY_URL_PATH=$(dirname "${REGISTRY_URL_FILE}")
-  mkdir -p "${REGISTRY_URL_PATH}"
+if [[ -n "${REGISTRY_SERVER_FILE}" ]]; then
+  REGISTRY_SERVER_PATH=$(dirname "${REGISTRY_SERVER_FILE}")
+  mkdir -p "${REGISTRY_SERVER_PATH}"
 
-  echo -n "${REGISTRY_URL}" > "${REGISTRY_URL_FILE}"
+  echo -n "${REGISTRY_SERVER}" > "${REGISTRY_SERVER_FILE}"
 fi
 
 if [[ "${UPGRADE_PLAN}" == "true" ]]; then
