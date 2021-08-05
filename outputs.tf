@@ -36,9 +36,9 @@ output "label" {
 }
 
 
-output "registry_url" {
-  description = "The url for the container registry endpoint"
-  value       = local.registry_url
+output "registry_server" {
+  description = "The server for the container registry endpoint used in `docker login` command"
+  value       = local.registry_server
 }
 
 output "registry_user" {
@@ -57,5 +57,11 @@ output "registry_password" {
 output "registry_namespace" {
   description = "The namespace for the container registry endpoint"
   value       = local.registry_namespace
+  depends_on = [null_resource.create_registry_namespace]
+}
+
+output "registry_url" {
+  description = "The url of the container registry server that can be accessed by a browser to manage images in the registry"
+  value       = "https://cloud.ibm.com/registry/namespaces?region=${local.registry_region}"
   depends_on = [null_resource.create_registry_namespace]
 }
