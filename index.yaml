@@ -54,6 +54,77 @@ versions:
         description: The namespace that will be created in the IBM Cloud image registry. If not provided the value will default to the resource group
         default: ""
         optional: true
+    version: v1.1.0
+    outputs:
+      - name: id
+        description: The id of the provisioned redis instance
+      - name: name
+        description: The name of the container registry service
+      - name: crn
+        description: The crn of the contaienr registry service
+      - name: location
+        description: The location of the provisioned redis instance
+      - name: service
+        description: The name of the key provisioned for the redis instance
+      - name: label
+        description: The label for the container registry instance
+      - name: registry_server
+        description: The server for the container registry endpoint used in `docker login` command
+      - name: registry_user
+        description: The username for the container registry endpoint
+      - name: registry_password
+        description: The password for the container registry endpoint
+      - name: registry_namespace
+        description: The namespace for the container registry endpoint
+      - name: registry_url
+        description: The url of the container registry server that can be accessed by a browser to manage images in the registry
+  - platforms:
+      - kubernetes
+      - ocp3
+      - ocp4
+    dependencies:
+      - id: resource_group
+        refs:
+          - source: github.com/cloud-native-toolkit/terraform-ibm-resource-group
+            version: ">= 2.1.0"
+    variables:
+      - name: resource_group_name
+        moduleRef:
+          id: resource_group
+          output: name
+        type: string
+        description: The name of the IBM Cloud resource group where the cluster will be created/can be found.
+      - name: registry_user
+        scope: ignore
+        type: string
+        description: The username to authenticate to the IBM Container Registry
+        default: iamapikey
+        optional: true
+      - name: registry_password
+        scope: ignore
+        type: string
+        description: The password (API key) to authenticate to the IBM Container Registry. If not provided the value will default to `var.ibmcloud_api_key`
+        default: ""
+        optional: true
+      - name: region
+        scope: global
+        type: string
+        description: The region for the image registry been installed.
+      - name: ibmcloud_api_key
+        scope: global
+        type: string
+        description: The IBM Cloud api token
+      - name: upgrade_plan
+        scope: global
+        type: bool
+        description: Flag indicating that the container registry plan should be upgraded from Free to Standard
+        default: true
+        optional: true
+      - name: registry_namespace
+        type: string
+        description: The namespace that will be created in the IBM Cloud image registry. If not provided the value will default to the resource group
+        default: ""
+        optional: true
     version: v1.0.0
     outputs:
       - name: id
