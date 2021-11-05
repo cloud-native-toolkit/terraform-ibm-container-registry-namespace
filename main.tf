@@ -23,6 +23,10 @@ resource null_resource ibmcloud_login {
 }
 
 resource null_resource determine_registry_region {
+  triggers = {
+    always = timestamp()
+  }
+
   provisioner "local-exec" {
     command = "${path.module}/scripts/determine-registry-region.sh '${var.region}' '${local.registry_region_file}'"
   }
