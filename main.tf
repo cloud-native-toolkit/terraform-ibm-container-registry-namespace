@@ -23,7 +23,7 @@ resource null_resource ibmcloud_login {
 }
 
 resource null_resource determine_registry_region {
-  triggers {
+  triggers = {
     always = timestamp()
   }
 
