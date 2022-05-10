@@ -1,54 +1,42 @@
 
 locals {
   tmp_dir              = "${path.cwd}/.tmp/icr"
-  registry_server_file = "${local.tmp_dir}/registry_server.val"
-  registry_region_file = "${local.tmp_dir}/registry_region.val"
   registry_namespace   = lower(var.registry_namespace != "" ? var.registry_namespace : var.resource_group_name)
   registry_user        = var.registry_user != "" ? var.registry_user : "iamapikey"
   registry_password    = var.registry_password != "" ? var.registry_password : var.ibmcloud_api_key
-  registry_server      = data.local_file.registry_server.content
-  registry_region      = data.local_file.registry_region.content
+  registry_region      = data.external.registry.result.registry_region
+  registry_server      = data.external.registry.result.registry_server
   service              = "container-registry"
   crn                  = "crn:v1:bluemix:public:container-registry:${var.region}:::"
 }
 
-resource null_resource ibmcloud_login {
-  provisioner "local-exec" {
-    command = "${path.module}/scripts/ibmcloud-login.sh ${var.region} ${var.resource_group_name}"
+module setup_clis {
+  source = "cloud-native-toolkit/clis/util"
+  version = "1.13.0"
 
-    environment = {
-      APIKEY = var.ibmcloud_api_key
-    }
-  }
+  clis = ["jq", "ibmcloud-cr"]
 }
 
-resource null_resource determine_registry_region {
-  triggers = {
-    always = timestamp()
+data external registry {
+  program = ["bash", "${path.module}/scripts/get-registry-info.sh"]
+
+  query = {
+    bin_dir          = module.setup_clis.bin_dir
+    region           = var.region
+    resource_group   = var.resource_group_name
+    ibmcloud_api_key = var.ibmcloud_api_key
   }
-
-  provisioner "local-exec" {
-    command = "${path.module}/scripts/determine-registry-region.sh '${var.region}' '${local.registry_region_file}'"
-  }
-}
-
-data local_file registry_region {
-  depends_on = [null_resource.determine_registry_region]
-
-  filename = local.registry_region_file
 }
 
 # this should probably be moved to a separate module that operates at a namespace level
 resource null_resource create_registry_namespace {
-  depends_on = [null_resource.ibmcloud_login]
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/create-registry-namespace.sh '${var.resource_group_name}' '${local.registry_region}' '${local.registry_namespace}' '${var.upgrade_plan}' '${local.registry_server_file}'"
+    command = "${path.module}/scripts/create-registry-namespace.sh '${var.region}' '${var.resource_group_name}' '${local.registry_region}' '${local.registry_namespace}' '${var.upgrade_plan}'"
+
+    environment = {
+      BIN_DIR = module.setup_clis.bin_dir
+      IBMCLOUD_API_KEY = var.ibmcloud_api_key
+    }
   }
-}
-
-data local_file registry_server {
-  depends_on = [null_resource.create_registry_namespace]
-
-  filename = local.registry_server_file
 }
