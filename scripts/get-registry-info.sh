@@ -29,7 +29,7 @@ else
   REGISTRY_REGION="${REGION}"
 fi
 
-ibmcloud login -r "${REGION}" -g "${RESOURCE_GROUP}" 1> /dev/null || exit 1
+ibmcloud login --apikey "${IBMCLOUD_API_KEY}" -r "${REGION}" -g "${RESOURCE_GROUP}" 1> /dev/null || exit 1
 ibmcloud cr region-set "${REGISTRY_REGION}" 1> /dev/null || exit 1
 REGISTRY_SERVER=$(ibmcloud cr region | grep "icr.io" | sed -E "s/.*'(.*icr.io)'.*/\1/")
 
