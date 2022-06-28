@@ -8,7 +8,7 @@ export PATH="${BIN_DIR}:${PATH}"
 
 REGION=$(echo "${INPUT}" | jq -r '.region // empty')
 RESOURCE_GROUP=$(echo "${INPUT}" | jq -r '.resource_group // empty')
-IBMCLOUD_API_KEY=$(echo "${INPUT}" | jq -r '.ibmcloud_api_key // empty')
+export IBMCLOUD_API_KEY=$(echo "${INPUT}" | jq -r '.ibmcloud_api_key // empty')
 
 if [[ -z "${IBMCLOUD_API_KEY}" ]]; then
   echo "IBMCLOUD_API_KEY is required" >&2
@@ -29,7 +29,7 @@ else
   REGISTRY_REGION="${REGION}"
 fi
 
-ibmcloud login --apikey "${IBMCLOUD_API_KEY}" -r "${REGION}" -g "${RESOURCE_GROUP}" 1> /dev/null || exit 1
+ibmcloud login -r "${REGION}" -g "${RESOURCE_GROUP}" 1> /dev/null || exit 1
 ibmcloud cr region-set "${REGISTRY_REGION}" 1> /dev/null || exit 1
 REGISTRY_SERVER=$(ibmcloud cr region | grep "icr.io" | sed -E "s/.*'(.*icr.io)'.*/\1/")
 
