@@ -8,7 +8,7 @@ export PATH="${BIN_DIR}:${PATH}"
 
 REGION=$(echo "${INPUT}" | jq -r '.region // empty')
 RESOURCE_GROUP=$(echo "${INPUT}" | jq -r '.resource_group // empty')
-IBMCLOUD_API_KEY=$(echo "${INPUT}" | jq -r '.ibmcloud_api_key // empty')
+export IBMCLOUD_API_KEY=$(echo "${INPUT}" | jq -r '.ibmcloud_api_key // empty')
 
 if [[ -z "${IBMCLOUD_API_KEY}" ]]; then
   echo "IBMCLOUD_API_KEY is required" >&2
