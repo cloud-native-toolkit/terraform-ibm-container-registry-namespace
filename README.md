@@ -23,6 +23,8 @@ This module makes use of the output from other modules:
 
 ## Example usage
 
+[Refer test cases for more details](test/stages/stage2-container-registry.tf)
+
 ```hcl-terraform
 module "container_registry" {
   source = "github.com/cloud-native-toolkit/terraform-ibm-container-registry.git"
