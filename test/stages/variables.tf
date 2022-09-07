@@ -3,6 +3,7 @@
 variable "resource_group_name" {
   type        = string
   description = "Existing resource group where the IKS cluster will be provisioned."
+  default="cr-prefix"  
 }
 
 variable "ibmcloud_api_key" {
