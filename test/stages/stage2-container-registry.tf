@@ -5,4 +5,10 @@ module "container_registry" {
 
   region              = var.region
   ibmcloud_api_key    = var.ibmcloud_api_key
+  registry_namespace   = local.name-random
+  
+}
+
+locals {
+  name-random = "${local.name_prefix}-${var.namespace}"
 }
