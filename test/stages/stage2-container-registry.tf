@@ -10,5 +10,5 @@ module "container_registry" {
 }
 
 locals {
-  name-random = "${local.name_prefix}-${var.namespace}"
+  name-random = "${local.name_prefix}-container-registry"
 }
