@@ -6,7 +6,7 @@ locals {
 }
 
 resource "random_string" "name-prefix" {
-  length           = 15
+  length           = 7
   special          = false
   upper = false
   numeric = false
