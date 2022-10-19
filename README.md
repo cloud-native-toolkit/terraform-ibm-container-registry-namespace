@@ -8,8 +8,7 @@ The module depends on the following software components:
 
 ### Command-line tools
 
-- terraform - v13
-- ibmcloud cli
+- terraform - v0.15
 
 ### Terraform providers
 
